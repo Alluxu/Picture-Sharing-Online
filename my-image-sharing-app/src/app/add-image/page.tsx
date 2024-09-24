@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie'; // To access the user's email from cookies
 
 const AddImagePage: React.FC = () => {
   const router = useRouter();
@@ -13,6 +14,18 @@ const AddImagePage: React.FC = () => {
     tags: '',
   });
   const [error, setError] = useState<string | null>(null);
+
+  // Check if the user is logged in
+  useEffect(() => {
+    const userEmail = Cookies.get('userEmail');
+    if (!userEmail) {
+      // If no email is found in cookies, redirect to login page
+      router.push('/');
+    } else {
+      // If logged in, automatically fill in the user email field
+      setFormData((prev) => ({ ...prev, user: userEmail }));
+    }
+  }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -72,6 +85,7 @@ const AddImagePage: React.FC = () => {
             onChange={handleInputChange}
             className="w-full px-3 py-2 border rounded"
             required
+            readOnly // The user email should be read-only since it’s auto-filled
           />
         </div>
         <div>
