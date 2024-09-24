@@ -3,11 +3,12 @@ import mongoose, { Document, Schema, Model } from 'mongoose';
 // Define the interface for the Image document
 export interface IImage extends Document {
   picture: string;
-  user: string; // Email
+  user: string; // Email of the user who uploaded the image
   createdDate: Date;
   title: string;
   description: string;
   tags: string[];
+  isPublic: boolean; // Visibility flag
 }
 
 // Define the schema for the Image model
@@ -18,6 +19,7 @@ const ImageSchema: Schema<IImage> = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   tags: { type: [String], default: [] },
+  isPublic: { type: Boolean, default: true }, // Default to public
 });
 
 // Create the Image model

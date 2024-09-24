@@ -5,10 +5,11 @@ import ImageCard from '@/components/ImageCard'; // Assuming you have a component
 import Cookies from 'js-cookie'; // For handling cookies
 
 interface Image {
-  _id: string; // Note: MongoDB uses _id by default
+  _id: string; // MongoDB uses _id by default
   title: string;
   user: string; // Assuming 'user' is the author field
   picture: string;
+  isPublic: boolean; // Public/Private status
 }
 
 const HomePage: React.FC = () => {
@@ -37,7 +38,9 @@ const HomePage: React.FC = () => {
         }
 
         const data = await res.json();
-        setImages(data);
+        // Filter only public images
+        const publicImages = data.filter((image: Image) => image.isPublic);
+        setImages(publicImages);
       } catch (err) {
         console.error('Error fetching images:', err);
         setError('Failed to load images. Please try again later.');
