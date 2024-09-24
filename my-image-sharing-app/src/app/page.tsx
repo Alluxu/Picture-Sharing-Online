@@ -6,7 +6,7 @@ import ImageCard from '@/components/ImageCard'; // Assuming you have a component
 interface Image {
   _id: string; // Note: MongoDB uses _id by default
   title: string;
-  author: string;
+  user: string; // Assuming 'user' is the author field
   picture: string;
 }
 
@@ -56,9 +56,10 @@ const HomePage: React.FC = () => {
           {currentImages.map((image) => (
             <ImageCard
               key={image._id}
+              id={image._id}         // Pass the _id to the ImageCard component
               title={image.title}
-              author={image.author}
-              imageUrl={image.picture}
+              author={image.user}    // Use 'user' as author
+              imageUrl={image.picture} // Use picture for image URL
             />
           ))}
         </div>
