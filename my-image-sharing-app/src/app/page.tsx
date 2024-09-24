@@ -7,7 +7,7 @@ interface Image {
   _id: string; // Note: MongoDB uses _id by default
   title: string;
   author: string;
-  imageUrl: string;
+  picture: string;
 }
 
 const HomePage: React.FC = () => {
@@ -58,7 +58,7 @@ const HomePage: React.FC = () => {
               key={image._id}
               title={image.title}
               author={image.author}
-              imageUrl={image.imageUrl}
+              imageUrl={image.picture}
             />
           ))}
         </div>

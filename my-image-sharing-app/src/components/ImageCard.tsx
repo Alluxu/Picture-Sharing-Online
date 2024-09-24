@@ -7,6 +7,8 @@ interface ImageCardProps {
 }
 
 const ImageCard: React.FC<ImageCardProps> = ({ title, author, imageUrl }) => {
+  console.log("Image URL:", imageUrl); // Debugging line
+
   return (
     <div className="border rounded-lg shadow-md overflow-hidden">
       <img src={imageUrl} alt={title} className="w-full h-48 object-cover" />
