@@ -34,7 +34,7 @@ Testing & Security: Open-source security tools (e.g., OWASP ZAP, Trivy) integrat
 
 ## Installation & Deployment
 ### Clone the repository:
-`git clone https://github.com/your-repo/image-share-js.git`
+`git clone https://github.com/Alluxu/Picture-Sharing-Online.git`
 
 Environment Setup: Set up the .env file with your environment variables (MySQL credentials, etc.).
 
