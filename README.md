@@ -34,12 +34,12 @@ Testing & Security: Open-source security tools (e.g., OWASP ZAP, Trivy) integrat
 
 ## Installation & Deployment
 ### Clone the repository:
-``git clone https://github.com/your-repo/image-share-js.git
+`git clone https://github.com/your-repo/image-share-js.git`
 
 Environment Setup: Set up the .env file with your environment variables (MySQL credentials, etc.).
 
 Docker Swarm Deployment: Deploy the application using Docker Swarm:
-``docker stack deploy -c docker-compose.yml image-share
+`docker stack deploy -c docker-compose.yml image-share`
 Access the Application: Open your browser and navigate to http://localhost:3000.
 
 
