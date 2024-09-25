@@ -1,4 +1,4 @@
-### IMAGE SHARE JS
+# IMAGE SHARE JS
 ## Overview
 IMAGE SHARE JS is a full-featured image-sharing web application that allows users to upload, share, and manage their images. It provides a secure platform where users can register, log in, and maintain their profiles with both public and private images. The application includes powerful features for managing images, user comments, and tags, while also giving owners full control over their uploads.
 
@@ -33,7 +33,7 @@ DevOps: Docker, Docker Swarm, GitHub Actions
 Testing & Security: Open-source security tools (e.g., OWASP ZAP, Trivy) integrated into the CI/CD pipeline
 
 ## Installation & Deployment
-# Clone the repository:
+### Clone the repository:
 git clone https://github.com/your-repo/image-share-js.git
 
 Environment Setup: Set up the .env file with your environment variables (MySQL credentials, etc.).
