@@ -49,44 +49,47 @@ const AddImagePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
+  
     if (!file) {
       setError('Please select an image to upload.');
       return;
     }
-
+  
+    console.log("File to be uploaded:", file); // Log the file object
+  
     const formDataToSubmit = new FormData();
-    formDataToSubmit.append('picture', file); // Add the file
+    formDataToSubmit.append('filename', file); // Add the file
     formDataToSubmit.append('title', formData.title);
     formDataToSubmit.append('description', formData.description);
     formDataToSubmit.append('tags', formData.tags.split(',').map((tag) => tag.trim()).join(','));
     formDataToSubmit.append('user', userEmail || ''); // Append the user email
     formDataToSubmit.append('isPublic', formData.isPublic ? 'true' : 'false'); // Add the isPublic field
-
+  
     try {
       const response = await fetch('/api/images/upload', {
         method: 'POST',
         body: formDataToSubmit, // Send as FormData to handle file upload
       });
-
+  
       if (!response.ok) {
         const errorResponse = await response.json();
         throw new Error(errorResponse.message || 'Failed to upload image');
       }
-
-      // On success, redirect to the homepage or another page
+  
       router.push('/');
-    } catch (err: unknown) {
-      // Fix for TypeScript error: err being of type unknown
+    } catch (err) {
+      // Fix for TypeScript: Narrowing the 'err' type
       if (err instanceof Error) {
         console.error('Error uploading image:', err.message);
         setError(err.message || 'Failed to upload image. Please try again.');
       } else {
-        console.error('Unexpected error', err);
+        console.error('Unexpected error:', err);
         setError('An unexpected error occurred. Please try again.');
       }
     }
   };
+  
+  
 
   return (
     <div className="max-w-lg mx-auto py-8">
@@ -96,7 +99,7 @@ const AddImagePage: React.FC = () => {
           <label className="block text-sm font-medium mb-1">Select Image</label>
           <input
             type="file"
-            name="picture"
+            name="filename"
             onChange={handleFileChange}
             className="w-full px-3 py-2 border rounded"
             accept="image/*"

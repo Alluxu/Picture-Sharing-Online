@@ -1,3 +1,4 @@
+//src/app/api/images/upload.ts
 import { createConnection } from 'mysql2/promise'; // Add this import
 import { NextResponse } from 'next/server';
 import fs from 'fs';

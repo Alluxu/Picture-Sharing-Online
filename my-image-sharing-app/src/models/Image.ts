@@ -5,27 +5,28 @@ import sequelize from '@/lib/db'; // Assuming you have an existing Sequelize con
 export interface IImage extends Model {
   id: number;
   filename: string;
-  user: string; // Email of the user who uploaded the image
-  createdDate: Date;
+  user_email: string; // Email of the user who uploaded the image
   title: string;
   description: string;
   tags: string[]; // Store tags as JSON in MySQL
   isPublic: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Define the Sequelize schema for the Image model
 const ImageModel = sequelize.define<IImage>('Image', {
   filename: { type: DataTypes.STRING, allowNull: false },
-  user: { type: DataTypes.STRING, allowNull: false },
-  createdDate: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+  user_email: { type: DataTypes.STRING, allowNull: false },
+  createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   title: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.TEXT, allowNull: false },
   tags: { type: DataTypes.JSON, defaultValue: [] }, // Use JSON type for MySQL
   isPublic: { type: DataTypes.BOOLEAN, defaultValue: true },
 }, {
-  tableName: 'images',  // Ensure the lowercase 'images' table is used
-  freezeTableName: true,  // Prevent Sequelize from pluralizing the table name
-  timestamps: true,  // Enable createdAt and updatedAt fields
+  tableName: 'images',  
+  freezeTableName: true,
+  timestamps: true,
 });
 
 export default ImageModel;
