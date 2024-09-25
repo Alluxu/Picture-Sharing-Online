@@ -6,19 +6,20 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const { isPublic } = await request.json();
 
     // Find the image by primary key (ID) and update the `isPublic` field
-    const updatedImage = await ImageModel.update(
+    const [affectedRows, updatedImages] = await ImageModel.update(
       { isPublic }, // Fields to update
       {
         where: { id: params.id }, // Where clause to match the record by ID
-        returning: true, // Ensures Sequelize returns the updated instance (for PostgreSQL)
+        returning: true, // This works for PostgreSQL but can be removed for MySQL
       }
     );
 
-    if (!updatedImage[1].length) {
+    // Check if the image was found and updated
+    if (affectedRows === 0) {
       return NextResponse.json({ message: 'Image not found' }, { status: 404 });
     }
 
-    return NextResponse.json(updatedImage[1][0]); // Return the updated image
+    return NextResponse.json(updatedImages[0]); // Return the first updated image
   } catch (error) {
     console.error('Error updating image visibility:', error);
     return NextResponse.json({ message: 'Error updating visibility' }, { status: 500 });

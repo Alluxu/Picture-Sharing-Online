@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
 interface Image {
-  _id: string;
-  picture: string;
+  id: string;
+  filename: string;
   title: string;
   isPublic: boolean; // Public/Private status
 }
@@ -53,7 +53,7 @@ const ProfilePage: React.FC = () => {
       if (!res.ok) {
         throw new Error('Failed to delete image');
       }
-      setImages(images.filter((image) => image._id !== id));
+      setImages(images.filter((image) => image.id !== id));
     } catch (err) {
       console.error('Error deleting image:', err);
       setError('Failed to delete image.');
@@ -72,7 +72,7 @@ const ProfilePage: React.FC = () => {
         throw new Error('Failed to update image visibility');
       }
       const updatedImage = await res.json();
-      setImages(images.map((img) => (img._id === id ? updatedImage : img)));
+      setImages(images.map((img) => (img.id === id ? updatedImage : img)));
     } catch (err) {
       console.error('Error updating visibility:', err);
       setError('Failed to update image visibility.');
@@ -87,34 +87,35 @@ const ProfilePage: React.FC = () => {
       {error && <p className="text-red-500">{error}</p>}
       {images.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {images.map((image) => (
-            <div key={image._id} className="border rounded-lg shadow-md overflow-hidden">
-              <img src={image.picture} alt={image.title} className="w-full h-48 object-cover" />
-              <div className="p-4">
-                <h2 className="text-lg font-semibold">{image.title}</h2>
-                <div className="flex items-center space-x-4 mt-4">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={image.isPublic}
-                      onChange={() => handleToggleVisibility(image._id, image.isPublic)}
-                      className="toggle-checkbox"
-                    />
-                    <span className="ml-2">{image.isPublic ? 'Public' : 'Private'}</span>
-                  </label>
-                  <a href={image.picture} download className="bg-green-500 text-white py-1 px-3 rounded">
-                    Download
-                  </a>
-                  <button
-                    onClick={() => handleDelete(image._id)}
-                    className="bg-red-500 text-white py-1 px-3 rounded"
-                  >
-                    Delete
-                  </button>
-                </div>
+        {images.map((image) => (
+          <div key={image.id} className="border rounded-lg shadow-md overflow-hidden">
+            <img src={`/uploads/${image.filename}`} alt={image.title} className="w-full h-48 object-cover" />
+            <div className="p-4">
+              <h2 className="text-lg font-semibold">{image.title}</h2>
+              <div className="flex items-center space-x-4 mt-4">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={image.isPublic}
+                    onChange={() => handleToggleVisibility(image.id, image.isPublic)}
+                    className="toggle-checkbox"
+                  />
+                  <span className="ml-2">{image.isPublic ? 'Public' : 'Private'}</span>
+                </label>
+                <a href={`/uploads/${image.filename}`} download className="bg-green-500 text-white py-1 px-3 rounded">
+                  Download
+                </a>
+                <button
+                  onClick={() => handleDelete(image.id)}
+                  className="bg-red-500 text-white py-1 px-3 rounded"
+                >
+                  Delete
+                </button>
               </div>
             </div>
-          ))}
+          </div>
+        ))}
+
         </div>
       ) : (
         <p>No images uploaded yet.</p>

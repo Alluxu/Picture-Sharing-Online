@@ -12,7 +12,7 @@ services:
     environment:
       MYSQL_HOST: mysql
       MYSQL_USER: your_mysql_user
-      MYSQL_PASSWORD: your_mysql_password
+      MYSQL_PASSWORD: 1337
       MYSQL_DATABASE: your_database
     volumes:
       - .:/app
@@ -24,10 +24,10 @@ services:
     image: mysql:5.7
     container_name: mysql_db
     environment:
-      MYSQL_ROOT_PASSWORD: your_mysql_password
+      MYSQL_ROOT_PASSWORD: 1337
       MYSQL_DATABASE: your_database
       MYSQL_USER: your_mysql_user
-      MYSQL_PASSWORD: your_mysql_password
+      MYSQL_PASSWORD: 1337
     ports:
       - '3306:3306'
     volumes:

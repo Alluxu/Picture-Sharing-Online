@@ -5,7 +5,7 @@ const mysql2 = require('mysql2'); // Explicitly require mysql2
 const sequelize = new Sequelize(
   process.env.MYSQL_DATABASE || 'your-database',
   process.env.MYSQL_USER || 'your-username',
-  process.env.MYSQL_PASSWORD || 'your-password',
+  process.env.MYSQL_PASSWORD || '1337',
   {
     host: process.env.MYSQL_HOST || 'localhost',
     dialect: 'mysql',

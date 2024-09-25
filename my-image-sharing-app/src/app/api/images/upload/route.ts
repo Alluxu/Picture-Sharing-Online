@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const description = formData.get('description') as string;
     const tags = formData.get('tags') as string;
     const user = formData.get('user') as string;
-    const file = formData.get('picture') as File;
+    const file = formData.get('filename') as File;
     const isPublic = formData.get('isPublic') === 'true'; // Capture the boolean value
 
     // Check if a file was uploaded
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     const connection = await createConnection({
       host: process.env.MYSQL_HOST || 'localhost',
       user: process.env.MYSQL_USER || 'your-username',
-      password: process.env.MYSQL_PASSWORD || 'your-password',
+      password: process.env.MYSQL_PASSWORD || '1337',
       database: process.env.MYSQL_DATABASE || 'your-database',
     });
 

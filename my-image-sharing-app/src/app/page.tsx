@@ -8,7 +8,7 @@ interface Image {
   id: string;
   title: string;
   user: string; // Assuming 'user' is the author field
-  picture: string;
+  filename: string;
   isPublic: boolean; // Public/Private status
 }
 
@@ -173,7 +173,7 @@ const HomePage: React.FC = () => {
               id={image.id}
               title={image.title}
               author={image.user}
-              imageUrl={`/uploads/${image.picture}`}
+              imageUrl={`/uploads/${image.filename}`}
             />
           ))}
         </div>
