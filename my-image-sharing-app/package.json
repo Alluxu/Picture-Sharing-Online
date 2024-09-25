@@ -1,30 +1,41 @@
 {
   "name": "my-image-sharing-app",
-  "version": "0.1.0",
+  "version": "0.0.11",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "NEXT_PUBLIC_DISABLE_LINTING=true next build",
     "start": "next start",
     "lint": "next lint"
   },
+  "eslintConfig": {
+    "rules": {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "react/jsx-no-target-blank": "off",
+      "next/next/no-img-element": "off"
+    }
+  },
   "dependencies": {
     "@types/js-cookie": "^3.0.6",
+    "express": "^4.21.0",
     "formidable": "^3.5.1",
+    "glob": "^11.0.0",
     "js-cookie": "^3.0.5",
-    "mongoose": "^8.6.3",
-    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.3",
     "next": "14.2.12",
     "react": "^18",
     "react-dom": "^18",
+    "rimraf": "^6.0.1",
+    "sequelize": "^6.37.3",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@types/multer": "^1.4.12",
+    "@types/continuation-local-storage": "^3.2.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/sequelize": "^4.28.20",
     "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.12",

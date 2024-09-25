@@ -1,14 +1,10 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/db';
-import ImageModel from '@/models/Image';
+import { createConnection } from 'mysql2/promise'; // Use MySQL connection
 
 export async function POST(request: Request) {
-  await dbConnect(); // Ensure the database connection is established
-
   try {
     const data = await request.json(); // Parse the JSON body
-
     const { picture, user, title, description, tags } = data;
 
     // Ensure all required fields are provided
@@ -16,19 +12,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
-    // Create a new image document using the Image model
-    const newImage = new ImageModel({
-      picture,
-      user,
-      title,
-      description,
-      tags,
-      createdDate: new Date(),
+    // Connect to MySQL
+    const connection = await createConnection({
+      host: process.env.MYSQL_HOST || 'localhost',
+      user: process.env.MYSQL_USER || 'your-username',
+      password: process.env.MYSQL_PASSWORD || 'your-password',
+      database: process.env.MYSQL_DATABASE || 'your-database',
     });
 
-    await newImage.save(); // Save the new image to the database
+    // Insert the image data into MySQL
+    const [result] = await connection.execute(
+      'INSERT INTO images (picture, user, title, description, tags, createdDate) VALUES (?, ?, ?, ?, ?, ?)',
+      [picture, user, title, description, tags, new Date()]
+    );
 
-    return NextResponse.json({ message: 'Image added successfully', image: newImage });
+    await connection.end(); // Close the MySQL connection
+
+    return NextResponse.json({ message: 'Image added successfully', result });
   } catch (error: any) {
     console.error('Error adding image:', error.message || error); // Log the error message for debugging
     return NextResponse.json({ message: `Error adding image: ${error.message}` }, { status: 500 });

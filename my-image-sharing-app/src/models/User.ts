@@ -1,18 +1,24 @@
-import mongoose, { Document, Schema, Model } from 'mongoose';
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '@/lib/db'; // Assuming you have your Sequelize instance setup
 
-// Define the user interface
-export interface IUser extends Document {
+// Define the interface for the User model
+export interface IUser extends Model {
+  id: number;
   email: string;
   password: string;
 }
 
-// Create the user schema
-const UserSchema: Schema<IUser> = new Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+// Define the Sequelize schema for the User model
+const UserModel = sequelize.define<IUser>('User', {
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
-
-// Create and export the user model
-const UserModel: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
 
 export default UserModel;

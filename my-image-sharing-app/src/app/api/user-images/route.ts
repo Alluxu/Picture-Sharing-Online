@@ -1,17 +1,34 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/db';
-import ImageModel from '@/models/Image';
+import { createConnection } from 'mysql2/promise';
 
 export async function GET(request: Request) {
-  await dbConnect();
   const url = new URL(request.url);
   const email = url.searchParams.get('email');
 
+  if (!email) {
+    return NextResponse.json({ message: 'Email query parameter is missing' }, { status: 400 });
+  }
+
   try {
-    const images = await ImageModel.find({ user: email });
+    // Connect to MySQL
+    const connection = await createConnection({
+      host: process.env.MYSQL_HOST || 'localhost',
+      user: process.env.MYSQL_USER || 'your-username',
+      password: process.env.MYSQL_PASSWORD || 'your-password',
+      database: process.env.MYSQL_DATABASE || 'your-database',
+    });
+
+    // Fetch images related to the user
+    const [images]: any = await connection.execute(
+      'SELECT * FROM images WHERE user_email = ?',
+      [email]
+    );
+
+    await connection.end(); // Close the connection
+
     return NextResponse.json(images);
-  } catch (error) {
-    console.error('Error fetching user images:', error);
+  } catch (error: any) {
+    console.error('Error fetching user images:', error.message || error);
     return NextResponse.json({ message: 'Error fetching images' }, { status: 500 });
   }
 }

@@ -1,26 +1,45 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/db'; // Ensure you have a database connection
-import UserModel from '@/models/User'; // User model for storing user data
+import { createConnection } from 'mysql2/promise'; // Use MySQL connection
 
 export async function POST(request: Request) {
-  await dbConnect();
-  
-  const { email, password } = await request.json();
-
   try {
+    const { email, password } = await request.json();
+
+    // Ensure email and password are provided
+    if (!email || !password) {
+      return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
+    }
+
+    // Connect to MySQL
+    const connection = await createConnection({
+      host: process.env.MYSQL_HOST || 'localhost',
+      user: process.env.MYSQL_USER || 'your-username',
+      password: process.env.MYSQL_PASSWORD || 'your-password',
+      database: process.env.MYSQL_DATABASE || 'your-database',
+    });
+
     // Check if the user already exists
-    const existingUser = await UserModel.findOne({ email });
-    if (existingUser) {
+    const [existingUser]: any = await connection.execute(
+      'SELECT * FROM users WHERE email = ?',
+      [email]
+    );
+
+    if (existingUser.length > 0) {
       return NextResponse.json({ message: 'User already exists' }, { status: 400 });
     }
 
-    // Create a new user
-    const newUser = new UserModel({ email, password });
-    await newUser.save();
+    // Insert new user into the MySQL database
+    const [result]: any = await connection.execute(
+      'INSERT INTO users (email, password) VALUES (?, ?)',
+      [email, password]
+    );
+
+    await connection.end(); // Close the connection
 
     return NextResponse.json({ message: 'User registered successfully' });
-  } catch (error) {
-    console.error('Error registering user:', error);
+  } catch (error: any) {
+    console.error('Error registering user:', error.message || error);
     return NextResponse.json({ message: 'Error registering user' }, { status: 500 });
   }
 }

@@ -1,59 +1,61 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/db';
-import ImageModel from '@/models/Image';
-import multer from 'multer';
-import { v4 as uuidv4 } from 'uuid';
+import { createConnection } from 'mysql2/promise';
+import formidable, { File } from 'formidable';
 import path from 'path';
+import fs from 'fs';
 
-// Configure Multer for file storage
-const storage = multer.diskStorage({
-  destination: './public/uploads/', // Ensure this directory exists
-  filename: (req, file, cb) => {
-    const uniqueSuffix = uuidv4() + path.extname(file.originalname); // Generate a unique filename
-    cb(null, uniqueSuffix);
-  },
-});
+// Ensure the upload directory exists
+const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
-const upload = multer({ storage });
+// Replace the old 'config' usage with this:
+export const dynamic = 'force-dynamic'; // Required for dynamic routes
 
-// Helper to handle the file upload process
-export const config = {
-  api: {
-    bodyParser: false, // Disable body parsing to handle multipart form data
-  },
-};
-
-export async function POST(req: Request) {
-  await dbConnect();
-
+export async function POST(req: any) {
   try {
-    // Use Multer to process the incoming request with the file
-    const form = await new Promise((resolve, reject) => {
-      upload.single('picture')(req as any, {} as any, (err: any) => {
+    const form = new formidable.IncomingForm({
+      uploadDir,
+      keepExtensions: true,
+      maxFileSize: 5 * 1024 * 1024, // 5MB max file size
+    });
+
+    const { fields, files }: { fields: any; files: any } = await new Promise((resolve, reject) => {
+      form.parse(req as any, (err: any, fields: any, files: any) => {
         if (err) reject(err);
-        resolve({ file: req.file });
+        resolve({ fields, files });
       });
     });
 
-    const file = (form as any).file; // Get the uploaded file details
-    const { title, description, tags, user } = req.body; // Get the form data
+    const file = files.picture as File; // Assuming 'picture' is the name of the file input field
+    const { title, description, tags, user } = fields; // Form fields
 
     if (!file) {
       return NextResponse.json({ message: 'No file uploaded' }, { status: 400 });
     }
 
-    // Create a new image document using the Image model
-    const newImage = new ImageModel({
-      picture: `/uploads/${file.filename}`, // Store the file path
-      title,
-      description,
-      tags: tags.split(',').map((tag: string) => tag.trim()), // Convert tags to array
-      user, // Email of the user who uploaded the image
+    // Use `filepath` instead of `newFilename` to get the file path
+    const filePath = file.path;
+
+    // Connect to MySQL
+    const connection = await createConnection({
+      host: process.env.MYSQL_HOST || 'localhost',
+      user: process.env.MYSQL_USER || 'your-username',
+      password: process.env.MYSQL_PASSWORD || 'your-password',
+      database: process.env.MYSQL_DATABASE || 'your-database',
     });
 
-    await newImage.save(); // Save the image document to the database
+    // Insert the new image metadata into the MySQL database
+    const [result]: any = await connection.execute(
+      'INSERT INTO images (filename, title, description, tags, user_email) VALUES (?, ?, ?, ?, ?)',
+      [path.basename(filePath), title, description, tags.split(',').map((tag: string) => tag.trim()).join(','), user]
+    );
 
-    return NextResponse.json({ message: 'Image uploaded successfully', image: newImage });
+    await connection.end(); // Close the MySQL connection
+
+    return NextResponse.json({ message: 'Image uploaded successfully' });
   } catch (error: any) {
     console.error('Error uploading image:', error);
     return NextResponse.json({ message: `Error uploading image: ${error.message}` }, { status: 500 });

@@ -1,35 +1,27 @@
-import mongoose from 'mongoose';
+import { Sequelize } from 'sequelize';
+const mysql2 = require('mysql2'); // Explicitly require mysql2
 
-const MONGODB_URI = process.env.MONGODB_URI as string;
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable in the .env file.');
-}
-
-// Global is used here to maintain the MongoDB connection across hot reloads in development.
-let cached = global.mongoose as { conn: mongoose.Connection | null, promise: Promise<mongoose.Connection> | null };
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
-async function dbConnect() {
-  if (cached.conn) {
-    return cached.conn;
+// Initialize Sequelize with MySQL settings
+const sequelize = new Sequelize(
+  process.env.MYSQL_DATABASE || 'your-database',
+  process.env.MYSQL_USER || 'your-username',
+  process.env.MYSQL_PASSWORD || 'your-password',
+  {
+    host: process.env.MYSQL_HOST || 'localhost',
+    dialect: 'mysql',
+    dialectModule: mysql2, // Ensure the correct MySQL dialect module is used
   }
+);
 
-  if (!cached.promise) {
-    const options = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI, options).then((mongoose) => {
-      return mongoose.connection;
-    });
+// Ensure Sequelize connection
+export async function dbConnect() {
+  try {
+    await sequelize.authenticate(); // Check the connection
+    console.log('Connection to MySQL has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+    throw error;
   }
-
-  cached.conn = await cached.promise;
-  return cached.conn;
 }
 
-export default dbConnect;
+export default sequelize;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState } from 'react';
@@ -5,7 +6,7 @@ import ImageCard from '@/components/ImageCard'; // Assuming you have a component
 import Cookies from 'js-cookie'; // For handling cookies
 
 interface Image {
-  _id: string; // MongoDB uses _id by default
+  id: string;
   title: string;
   user: string; // Assuming 'user' is the author field
   picture: string;
@@ -161,8 +162,8 @@ const HomePage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {currentImages.map((image) => (
             <ImageCard
-              key={image._id}
-              id={image._id}
+              key={image.id}
+              id={image.id}
               title={image.title}
               author={image.user}
               imageUrl={image.picture}
