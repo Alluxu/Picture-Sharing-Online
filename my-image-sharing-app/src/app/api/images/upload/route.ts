@@ -1,41 +1,37 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { createConnection } from 'mysql2/promise'; // Add this import
 import { NextResponse } from 'next/server';
-import { IncomingForm, Fields, Files, File } from 'formidable';
-import { createConnection } from 'mysql2/promise';
 import fs from 'fs';
 import path from 'path';
 
-const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-
 // Ensure upload directory exists
+const uploadDir = path.join(process.cwd(), 'public', 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-export async function POST(req: Request) {
+export const dynamic = 'force-dynamic';
+
+export async function POST(request: Request) {
   try {
-    const form = new IncomingForm({
-      uploadDir,
-      keepExtensions: true,
-      maxFileSize: 5 * 1024 * 1024,
-    });
+    const formData = await request.formData();
 
-    const { fields, files }: { fields: Fields; files: Files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err: any, fields: Fields, files: Files) => {
-        if (err) reject(err);
-        resolve({ fields, files });
-      });
-    });
+    const title = formData.get('title') as string;
+    const description = formData.get('description') as string;
+    const tags = formData.get('tags') as string;
+    const user = formData.get('user') as string;
+    const file = formData.get('picture') as File;
+    const isPublic = formData.get('isPublic') === 'true'; // Capture the boolean value
 
-    const { title, description, tags, user } = fields;
-    const file = files.picture as File;
-
-    if (!file) {
-      throw new Error('No file uploaded');
+    // Check if a file was uploaded
+    if (!file || typeof file === 'string') {
+      return NextResponse.json({ message: 'No file uploaded' }, { status: 400 });
     }
 
-    const filePath = file.path;
+    const filePath = path.join(uploadDir, file.name);
+    const buffer = Buffer.from(await file.arrayBuffer());
+    fs.writeFileSync(filePath, buffer);
 
+    // Store the image data in the database
     const connection = await createConnection({
       host: process.env.MYSQL_HOST || 'localhost',
       user: process.env.MYSQL_USER || 'your-username',
@@ -44,8 +40,8 @@ export async function POST(req: Request) {
     });
 
     const [result] = await connection.execute(
-      'INSERT INTO images (filename, title, description, tags, user_email) VALUES (?, ?, ?, ?, ?)',
-      [path.basename(filePath), title, description, tags, user]
+      'INSERT INTO images (filename, title, description, tags, user_email, isPublic) VALUES (?, ?, ?, ?, ?, ?)',
+      [file.name, title, description, tags, user, isPublic]
     );
 
     await connection.end();

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React from 'react';
 import { createConnection } from 'mysql2/promise';
 import { notFound } from 'next/navigation'; // For handling not found cases

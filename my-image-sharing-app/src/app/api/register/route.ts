@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { NextResponse } from 'next/server';
 import { createConnection } from 'mysql2/promise'; // Use MySQL connection
 

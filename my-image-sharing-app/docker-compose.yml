@@ -16,6 +16,7 @@ services:
       MYSQL_DATABASE: your_database
     volumes:
       - .:/app
+    command: npm run dev
     networks:
       - app-network
 

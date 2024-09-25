@@ -1,4 +1,6 @@
-"use client";
+//src/app/add-image/page.tsx
+
+"use client"; // Add this at the top to make this a Client Component
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -10,6 +12,7 @@ const AddImagePage: React.FC = () => {
     title: '',
     description: '',
     tags: '',
+    isPublic: true
   });
   const [file, setFile] = useState<File | null>(null); // To handle the image file
   const [error, setError] = useState<string | null>(null);
@@ -34,6 +37,11 @@ const AddImagePage: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
+      // Check if the file is an image
+      if (!selectedFile.type.startsWith('image/')) {
+        setError('Please select a valid image file');
+        return;
+      }
       setFile(selectedFile);
     }
   };
@@ -53,6 +61,7 @@ const AddImagePage: React.FC = () => {
     formDataToSubmit.append('description', formData.description);
     formDataToSubmit.append('tags', formData.tags.split(',').map((tag) => tag.trim()).join(','));
     formDataToSubmit.append('user', userEmail || ''); // Append the user email
+    formDataToSubmit.append('isPublic', formData.isPublic ? 'true' : 'false'); // Add the isPublic field
 
     try {
       const response = await fetch('/api/images/upload', {
@@ -61,14 +70,21 @@ const AddImagePage: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to upload image');
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || 'Failed to upload image');
       }
 
       // On success, redirect to the homepage or another page
       router.push('/');
-    } catch (err) {
-      console.error('Error uploading image:', err);
-      setError('Failed to upload image. Please try again.');
+    } catch (err: unknown) {
+      // Fix for TypeScript error: err being of type unknown
+      if (err instanceof Error) {
+        console.error('Error uploading image:', err.message);
+        setError(err.message || 'Failed to upload image. Please try again.');
+      } else {
+        console.error('Unexpected error', err);
+        setError('An unexpected error occurred. Please try again.');
+      }
     }
   };
 
@@ -83,6 +99,7 @@ const AddImagePage: React.FC = () => {
             name="picture"
             onChange={handleFileChange}
             className="w-full px-3 py-2 border rounded"
+            accept="image/*"
             required
           />
         </div>
@@ -127,6 +144,16 @@ const AddImagePage: React.FC = () => {
             className="w-full px-3 py-2 border rounded"
             readOnly
           />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Public</label>
+          <input
+            type="checkbox"
+            name="isPublic"
+            checked={formData.isPublic}
+            onChange={handleInputChange}
+          />{' '}
+          Make this image public
         </div>
         {error && <p className="text-red-500">{error}</p>}
         <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">

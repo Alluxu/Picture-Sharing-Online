@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState } from 'react';
@@ -39,8 +38,14 @@ const HomePage: React.FC = () => {
         }
 
         const data = await res.json();
+
+        console.log("Fetched Images:", data); // Log all fetched images
+
         // Filter only public images
         const publicImages = data.filter((image: Image) => image.isPublic);
+        
+        console.log("Public Images:", publicImages); // Log only public images
+
         setImages(publicImages);
       } catch (err) {
         console.error('Error fetching images:', err);
@@ -61,6 +66,8 @@ const HomePage: React.FC = () => {
   const indexOfLastImage = currentPage * imagesPerPage;
   const indexOfFirstImage = indexOfLastImage - imagesPerPage;
   const currentImages = images.slice(indexOfFirstImage, indexOfLastImage);
+
+  console.log("Current Images:", currentImages); // Log the images being displayed on the current page
 
   const handleNextPage = () => setCurrentPage((prev) => prev + 1);
   const handlePreviousPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -166,7 +173,7 @@ const HomePage: React.FC = () => {
               id={image.id}
               title={image.title}
               author={image.user}
-              imageUrl={image.picture}
+              imageUrl={`/uploads/${image.picture}`}
             />
           ))}
         </div>
