@@ -1,28 +1,20 @@
-// src/app/api/images/route.ts
-import { createConnection } from 'mysql2/promise';
 import { NextResponse } from 'next/server';
+import ImageModel from '@/models/Image';
 
-export const dynamic = 'force-dynamic'; // Prevent prerendering
-
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    // Connect to the MySQL database
-    const connection = await createConnection({
-      host: process.env.MYSQL_HOST || 'localhost',
-      user: process.env.MYSQL_USER || 'your-username',
-      password: process.env.MYSQL_PASSWORD || '1337',
-      database: process.env.MYSQL_DATABASE || 'your-database',
-    });
+    // Fetch all images from the database
+    const images = await ImageModel.findAll({
+        attributes: ['id', 'title', 'filename', 'user_email', 'tags', 'isPublic']
+      });
+      
+    // If no images found
+    if (!images || images.length === 0) {
+      return NextResponse.json({ message: 'No images found' }, { status: 404 });
+    }
 
-    // Fetch all images from the "images" table
-    const [rows] = await connection.execute('SELECT * FROM images');
-
-    await connection.end(); // Close the MySQL connection
-
-    // Log the fetched rows
-    console.log('Fetched rows:', rows);
-
-    return NextResponse.json(rows); // Return images as JSON
+    // Return the images as JSON
+    return NextResponse.json(images);
   } catch (error) {
     console.error('Error fetching images:', error);
     return NextResponse.json({ message: 'Error fetching images' }, { status: 500 });

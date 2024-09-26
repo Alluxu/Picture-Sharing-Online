@@ -1,3 +1,4 @@
+//src/app/page.tsx
 "use client";
 
 import React, { useEffect, useState } from 'react';
@@ -7,7 +8,7 @@ import Cookies from 'js-cookie'; // For handling cookies
 interface Image {
   id: string;
   title: string;
-  user: string; // Assuming 'user' is the author field
+  user_email: string; // Assuming 'user' is the author field
   filename: string;
   isPublic: boolean; // Public/Private status
 }
@@ -172,7 +173,7 @@ const HomePage: React.FC = () => {
               key={image.id}
               id={image.id}
               title={image.title}
-              author={image.user}
+              author={image.user_email}
               imageUrl={`/uploads/${image.filename}`}
             />
           ))}
