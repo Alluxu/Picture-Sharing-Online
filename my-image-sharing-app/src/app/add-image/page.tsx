@@ -1,10 +1,10 @@
-//src/app/add-image/page.tsx
+// src/app/add-image/page.tsx
 
 "use client"; // Add this at the top to make this a Client Component
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie'; // To access the user's email from cookies
+import Cookies from 'js-cookie'; 
 
 const AddImagePage: React.FC = () => {
   const router = useRouter();
@@ -14,20 +14,21 @@ const AddImagePage: React.FC = () => {
     tags: '',
     isPublic: true
   });
-  const [file, setFile] = useState<File | null>(null); // To handle the image file
+  const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string | null>(null); // Manage user email
+  const [userEmail, setUserEmail] = useState<string | null>(null); 
+  const [isRedirecting, setIsRedirecting] = useState(false); // Add flag to prevent double execution
 
   // Check if the user is logged in
   useEffect(() => {
     const email = Cookies.get('userEmail');
-    if (!email) {
-      // If no email is found in cookies, redirect to login page
-      router.push('/');
-    } else {
-      setUserEmail(email);
+    setUserEmail(email ?? null); // Use null if email is undefined
+    if (!email && !isRedirecting) {
+      alert('Please login before adding an image!');
+      setIsRedirecting(true); // Set the flag
+      router.push('/'); // Redirect to home page if not logged in
     }
-  }, [router]);
+  }, [router, isRedirecting]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -37,7 +38,6 @@ const AddImagePage: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      // Check if the file is an image
       if (!selectedFile.type.startsWith('image/')) {
         setError('Please select a valid image file');
         return;
@@ -49,47 +49,40 @@ const AddImagePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-  
+
     if (!file) {
       setError('Please select an image to upload.');
       return;
     }
-  
-    console.log("File to be uploaded:", file); // Log the file object
-  
+
     const formDataToSubmit = new FormData();
-    formDataToSubmit.append('filename', file); // Add the file
+    formDataToSubmit.append('filename', file);
     formDataToSubmit.append('title', formData.title);
     formDataToSubmit.append('description', formData.description);
     formDataToSubmit.append('tags', formData.tags.split(',').map((tag) => tag.trim()).join(','));
-    formDataToSubmit.append('user', userEmail || ''); // Append the user email
-    formDataToSubmit.append('isPublic', formData.isPublic ? 'true' : 'false'); // Add the isPublic field
-  
+    formDataToSubmit.append('user', userEmail || '');
+    formDataToSubmit.append('isPublic', formData.isPublic ? 'true' : 'false');
+
     try {
       const response = await fetch('/api/images/upload', {
         method: 'POST',
-        body: formDataToSubmit, // Send as FormData to handle file upload
+        body: formDataToSubmit,
       });
-  
+
       if (!response.ok) {
         const errorResponse = await response.json();
         throw new Error(errorResponse.message || 'Failed to upload image');
       }
-  
+
       router.push('/');
     } catch (err) {
-      // Fix for TypeScript: Narrowing the 'err' type
       if (err instanceof Error) {
-        console.error('Error uploading image:', err.message);
         setError(err.message || 'Failed to upload image. Please try again.');
       } else {
-        console.error('Unexpected error:', err);
         setError('An unexpected error occurred. Please try again.');
       }
     }
   };
-  
-  
 
   return (
     <div className="max-w-lg mx-auto py-8">

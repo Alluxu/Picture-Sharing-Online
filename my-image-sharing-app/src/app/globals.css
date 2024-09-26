@@ -25,3 +25,27 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Center the menu at the top */
+.header {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 60px;
+  background-color: #333;
+}
+
+.menu {
+  display: flex;
+  gap: 20px; /* Space between links */
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.menu a:hover {
+  text-decoration: underline;
+}
