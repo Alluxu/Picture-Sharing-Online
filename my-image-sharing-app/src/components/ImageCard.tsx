@@ -2,7 +2,7 @@
 import React from 'react';
 
 interface ImageCardProps {
-  id: string;        // Add the id prop to the interface
+  id: string;        
   title: string;
   author: string;
   imageUrl: string;

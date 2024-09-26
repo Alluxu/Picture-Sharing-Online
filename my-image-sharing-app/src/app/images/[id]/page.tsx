@@ -1,6 +1,6 @@
 // src/app/images/[id]/page.tsx
 
-"use client"; // Add this at the very top
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { notFound, useRouter } from 'next/navigation'; // For handling not found cases and navigation

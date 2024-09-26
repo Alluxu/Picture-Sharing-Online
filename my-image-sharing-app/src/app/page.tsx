@@ -1,15 +1,13 @@
-
-// src/app/page.tsx
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import ImageCard from '@/components/ImageCard'; // Assuming you have a component to display each image
+import ImageCard from '@/components/ImageCard'; 
 import Cookies from 'js-cookie'; // To check if the user is logged in
 
 interface Image {
   id: string;
   title: string;
-  user_email: string; // Assuming 'user_email' is the correct field
+  user_email: string;
   filename: string;
   isPublic: boolean;
 }
@@ -56,7 +54,7 @@ const HomePage: React.FC = () => {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-2">Image Gallery</h1>
+      <h1 className="text-3xl font-bold mb-2">Public Image Gallery</h1>
 
       {/* Display message if the user is not logged in */}
       {!isLoggedIn && (

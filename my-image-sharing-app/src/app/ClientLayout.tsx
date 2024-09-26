@@ -1,4 +1,4 @@
-"use client"; // Mark this as a Client Component
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showModal, setShowModal] = useState(false); // State for showing modal
+  const [showModal, setShowModal] = useState(false); 
   const [isLogin, setIsLogin] = useState(true); // Track if modal is for login or register
   const [email, setEmail] = useState(''); // Store email input
   const [password, setPassword] = useState(''); // Store password input
