@@ -1,8 +1,10 @@
+
 // src/app/page.tsx
 "use client";
 
 import React, { useEffect, useState } from 'react';
 import ImageCard from '@/components/ImageCard'; // Assuming you have a component to display each image
+import Cookies from 'js-cookie'; // To check if the user is logged in
 
 interface Image {
   id: string;
@@ -17,8 +19,14 @@ const HomePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState<string | null>(null); // State to handle errors
   const imagesPerPage = 20;
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // To manage login state
 
   useEffect(() => {
+    // Check if the user is logged in
+    const userEmail = Cookies.get('userEmail');
+    setIsLoggedIn(!!userEmail); // If there's a user email in cookies, set login state
+
+    // Fetch images from API
     async function fetchImages() {
       try {
         const res = await fetch('/api/images'); // Fetch from your API route
@@ -48,7 +56,14 @@ const HomePage: React.FC = () => {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Image Gallery</h1>
+      <h1 className="text-3xl font-bold mb-2">Image Gallery</h1>
+
+      {/* Display message if the user is not logged in */}
+      {!isLoggedIn && (
+        <p className="text-center text-gray-500 mb-6">
+          Register/Login to add images!
+        </p>
+      )}
 
       {error ? (
         <p className="text-red-500">{error}</p>
