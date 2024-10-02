@@ -1,0 +1,36 @@
+version: '3.7'
+services:
+  app:
+    image: yourusername/yourapp:latest
+    container_name: nextjs_app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: your_mysql_user
+      MYSQL_PASSWORD: 1337
+      MYSQL_DATABASE: your_database
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1337
+      MYSQL_DATABASE: your_database
+      MYSQL_USER: your_mysql_user
+      MYSQL_PASSWORD: 1337
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:

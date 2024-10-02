@@ -8,9 +8,9 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci --only=production
 
-# Copy the entire project directory to the container
+# Copy the rest of the application code
 COPY . .
 
 # Build the Next.js app for production
@@ -18,6 +18,9 @@ RUN npm run build
 
 # Expose the port the app runs on
 EXPOSE 3000
+
+# Set environment variable to production
+ENV NODE_ENV=production
 
 # Command to start the app
 CMD ["npm", "start"]
