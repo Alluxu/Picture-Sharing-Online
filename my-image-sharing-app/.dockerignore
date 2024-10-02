@@ -1,10 +1,22 @@
-# .dockerignore
-
+# Directories to exclude
+mysql-data
 node_modules
-npm-debug.log
+public/uploads
+
+# Git files
+.git
+.gitignore
+
+# Docker files
 Dockerfile
 docker-compose.yml
+docker-compose.prod.yml
+.dockerignore
+
+# Environment files
 .env
-.git
+
+# Logs and temp files
+npm-debug.log*
 .vscode
-public/uploads
+

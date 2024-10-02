@@ -1,4 +1,4 @@
-version: '3.7'
+
 services:
   app:
     image: yourusername/yourapp:latest
@@ -12,6 +12,8 @@ services:
       MYSQL_USER: your_mysql_user
       MYSQL_PASSWORD: 1337
       MYSQL_DATABASE: your_database
+    volumes:
+      - uploads-data:/app/public/uploads
     networks:
       - app-network
 
@@ -31,6 +33,7 @@ services:
 
 volumes:
   mysql-data:
+  uploads-data:
 
 networks:
   app-network:

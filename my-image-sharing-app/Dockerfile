@@ -1,26 +1,45 @@
-# Use official Node.js image as base
-FROM node:18-alpine
-
-# Set the working directory inside the container
+# Stage 1: Install dependencies
+FROM node:18-alpine AS deps
 WORKDIR /app
 
-# Copy package.json and package-lock.json first
-COPY package*.json ./
+# Install dependencies based on the lock file
+COPY package.json package-lock.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy the rest of the application code
+# Copy the rest of your application code
 COPY . .
 
-# Build the Next.js app for production
+# Stage 2: Build the application
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+COPY --from=deps /app ./
+
+# Build the Next.js app
 RUN npm run build
 
-# Expose the port the app runs on
-EXPOSE 3000
+# Stage 3: Prepare production image
+FROM node:18-alpine AS runner
+WORKDIR /app
 
-# Set environment variable to production
 ENV NODE_ENV=production
 
-# Command to start the app
+# Copy package.json and package-lock.json
+COPY package.json package-lock.json ./
+
+# Install only production dependencies
+RUN npm ci --only=production
+
+# Copy built application and necessary files
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+
+# Copy next.config.mjs directly from the context
+COPY next.config.mjs ./
+
+# Expose port
+EXPOSE 3000
+
+# Start the application
 CMD ["npm", "start"]
+
