@@ -89,7 +89,11 @@ const ProfilePage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {images.map((image) => (
           <div key={image.id} className="border rounded-lg shadow-md overflow-hidden">
-            <img src={`/uploads/${image.filename}`} alt={image.title} className="w-full h-48 object-cover" />
+            <img
+              src={`/api/uploads/${encodeURIComponent(image.filename)}`}
+              alt={image.title}
+              className="w-full h-48 object-cover"
+            />
             <div className="p-4">
               <h2 className="text-lg font-semibold">{image.title}</h2>
               <div className="flex items-center space-x-4 mt-4">
@@ -102,7 +106,11 @@ const ProfilePage: React.FC = () => {
                   />
                   <span className="ml-2">{image.isPublic ? 'Public' : 'Private'}</span>
                 </label>
-                <a href={`/uploads/${image.filename}`} download className="bg-green-500 text-white py-1 px-3 rounded">
+                <a
+                  href={`/api/uploads/${encodeURIComponent(image.filename)}`}
+                  download
+                  className="bg-green-500 text-white py-1 px-3 rounded"
+                >
                   Download
                 </a>
                 <button

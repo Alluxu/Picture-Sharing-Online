@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  app:
+    image: alvargran/picture-sharing-online:v6
+    container_name: nextjs_app
+    ports:
+      - '80:3000'
+    depends_on:
+      - mysql
+    environment:
+      NODE_ENV: production
+      MYSQL_HOST: mysql
+      MYSQL_PASSWORD: 1337
+      MYSQL_DATABASE: your_database
+      MYSQL_USER: root
+    volumes:
+      - /uploads:/app/uploads
+      - ./config:/app/config  # Mount the config folder to persist config.json
+    networks:
+      - app-network
+    command: sh -c "if [ -w /app/uploads ] && [ -x /app/uploads ]; then echo 'Uploads dir writable and executable'; else echo 'Uploads dir not writable or executable'; fi && npm start"
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1337
+      MYSQL_DATABASE: your_database
+      MYSQL_PASSWORD: 1337
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./mysql-data:/var/lib/mysql  # Bind mount the MySQL data folder
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: sh -c "chmod 644 /docker-entrypoint-initdb.d/init.sql && docker-entrypoint.sh mysqld"
+    networks:
+      - app-network
