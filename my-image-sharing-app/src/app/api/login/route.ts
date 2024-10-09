@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     // Connect to MySQL
     const connection = await createConnection({
-      host: process.env.MYSQL_HOST || 'localhost',
+      host: process.env.MYSQL_HOST || 'mysql',
       user: process.env.MYSQL_USER || 'your-username',
       password: process.env.MYSQL_PASSWORD || '1337',
       database: process.env.MYSQL_DATABASE || 'your-database',

@@ -1,0 +1,10 @@
+{
+  "production": {
+    "username": "your_mysql_user",
+    "password": "1337",
+    "database": "your_database",
+    "host": "mysql",
+    "dialect": "mysql",
+    "logging": false
+  }
+}

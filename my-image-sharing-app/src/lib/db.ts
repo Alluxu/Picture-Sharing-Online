@@ -7,7 +7,7 @@ const sequelize = new Sequelize(
   process.env.MYSQL_USER || 'your-username',
   process.env.MYSQL_PASSWORD || '1337',
   {
-    host: process.env.MYSQL_HOST || 'localhost',
+    host: process.env.MYSQL_HOST || 'mysql',
     dialect: 'mysql',
     dialectModule: mysql2, // Ensure the correct MySQL dialect module is used
   }

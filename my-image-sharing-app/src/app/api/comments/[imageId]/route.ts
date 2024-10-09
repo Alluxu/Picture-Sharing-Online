@@ -7,7 +7,7 @@ export async function GET(request: Request, { params }: { params: { imageId: str
 
   try {
     const connection = await createConnection({
-      host: process.env.MYSQL_HOST || 'localhost',
+      host: process.env.MYSQL_HOST || 'mysql',
       user: process.env.MYSQL_USER || 'your-username',
       password: process.env.MYSQL_PASSWORD || '1337',
       database: process.env.MYSQL_DATABASE || 'your_database',
@@ -36,7 +36,7 @@ export async function POST(request: Request, { params }: { params: { imageId: st
     const { email, commentText } = formData;
 
     const connection = await createConnection({
-      host: process.env.MYSQL_HOST || 'localhost',
+      host: process.env.MYSQL_HOST || 'mysql',
       user: process.env.MYSQL_USER || 'your-username',
       password: process.env.MYSQL_PASSWORD || '1337',
       database: process.env.MYSQL_DATABASE || 'your_database',

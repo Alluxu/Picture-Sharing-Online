@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import ImageCard from '@/components/ImageCard'; 
+import ImageCard from '@/components/ImageCard';
 import Cookies from 'js-cookie'; // To check if the user is logged in
 
 interface Image {
@@ -73,7 +73,7 @@ const HomePage: React.FC = () => {
               id={image.id}
               title={image.title}
               author={image.user_email}
-              imageUrl={`/uploads/${image.filename}`}
+              imageUrl={`/api/uploads/${encodeURIComponent(image.filename)}`}
             />
           ))}
         </div>

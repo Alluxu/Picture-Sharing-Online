@@ -1,8 +1,26 @@
+version: '3.8'
 
 services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 1337
+      MYSQL_DATABASE: your_database
+      MYSQL_USER: your_mysql_user
+      MYSQL_PASSWORD: 1337
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+
   app:
-    image: yourusername/yourapp:latest
-    container_name: nextjs_app
+    image: alvargran/picture-sharing-online:latest 
     ports:
       - '3000:3000'
     depends_on:
@@ -16,20 +34,31 @@ services:
       - uploads-data:/app/public/uploads
     networks:
       - app-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
-  mysql:
-    image: mysql:5.7
-    container_name: mysql_db
-    restart: always
+  migrate:
+    image: alvargran/picture-sharing-online:latest
+    command: sh -c "npx sequelize-cli db:migrate"
+    depends_on:
+      - mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 1337
-      MYSQL_DATABASE: your_database
+      MYSQL_HOST: mysql
       MYSQL_USER: your_mysql_user
       MYSQL_PASSWORD: 1337
+      MYSQL_DATABASE: your_database
     volumes:
-      - mysql-data:/var/lib/mysql
+      - ./config:/app/config  # Ensures config is available inside the container
     networks:
       - app-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
 
 volumes:
   mysql-data:
@@ -37,3 +66,5 @@ volumes:
 
 networks:
   app-network:
+    driver: overlay
+

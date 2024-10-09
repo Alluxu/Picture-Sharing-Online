@@ -18,6 +18,14 @@ COPY --from=deps /app ./
 # Build the Next.js app
 RUN npm run build
 
+# Copy the db-init folder to the /docker-entrypoint-initdb.d/ inside the MySQL container
+COPY ./db-init /docker-entrypoint-initdb.d/
+
+# Copy the config directory
+COPY config ./config
+RUN mkdir -p /app/uploads
+RUN chmod -R 777 /app/uploads
+
 # Stage 3: Prepare production image
 FROM node:18-alpine AS runner
 WORKDIR /app
