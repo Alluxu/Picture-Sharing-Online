@@ -16,7 +16,7 @@ services:
     networks:
       - app-network
     expose:
-      - 3000  # Expose port 3000 to other services in the network
+      - 3000
 
   mysql:
     image: mysql:5.7
@@ -38,15 +38,32 @@ services:
     image: nginx:latest
     container_name: nginx_proxy
     ports:
-      - '80:80'  # Expose port 80 for HTTP traffic
-      - '443:443'  # Optionally expose port 443 for HTTPS
+      - '80:80'   # HTTP
+      - '443:443' # HTTPS
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf  # Nginx configuration file
-      - ./certs:/etc/nginx/certs  # SSL certificates (optional)
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
     depends_on:
       - app
+      - certbot
     networks:
       - app-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certs:/etc/letsencrypt
+      - ./certbot-data:/var/lib/letsencrypt
+      - ./certbot-logs:/var/log/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot -n --quiet; sleep 12h & wait $${!}; done;'"
+    networks:
+      - app-network
+
+volumes:
+  certs:
+  certbot-data:
+  certbot-logs:
 
 networks:
   app-network:
