@@ -1,5 +1,5 @@
 # IMAGE SHARE JS (WIP)
-### [Link: https://alvargran.io/](https://alvargran.lol/)
+### [Link: https://alvargran.lol/](https://alvargran.lol/)
 ## Overview
 IMAGE SHARE JS is a full-featured image-sharing web application that allows users to upload, share, and manage their images. It provides a secure platform where users can register, log in, and maintain their profiles with both public and private images. The application includes powerful features for managing images, user comments, and tags, while also giving owners full control over their uploads.
 
