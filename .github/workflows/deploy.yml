@@ -40,6 +40,5 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script: |
-          cd /home/user
           docker compose pull app
           docker compose up -d app
