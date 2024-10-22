@@ -1,0 +1,45 @@
+name: Build and Deploy to Docker Hub and Server
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+    - name: Build the Docker image
+      run: docker build -t alvargran/picture-sharing-online:${{ github.sha }} .
+
+    - name: Tag the Docker image
+      run: docker tag alvargran/picture-sharing-online:${{ github.sha }} alvargran/picture-sharing-online:latest
+
+    - name: Push the Docker image to Docker Hub
+      run: |
+        docker push alvargran/picture-sharing-online:${{ github.sha }}
+        docker push alvargran/picture-sharing-online:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Deploy to the server
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          cd /path/to/your/project
+          docker-compose pull app
+          docker-compose up -d app
