@@ -3,7 +3,7 @@ name: Build and Deploy to Docker Hub and Server
 on:
   push:
     branches:
-      - main  
+      - main 
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
       run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
     - name: Build the Docker image
-      run: docker build -t alvargran/picture-sharing-online:${{ github.sha }} .
+      run: docker build -t alvargran/picture-sharing-online:${{ github.sha }} ./Picture-Sharing-Online/my-image-sharing-app
 
     - name: Tag the Docker image
       run: docker tag alvargran/picture-sharing-online:${{ github.sha }} alvargran/picture-sharing-online:latest
@@ -40,6 +40,6 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script: |
-          cd /path/to/your/project
+          cd /home/user
           docker-compose pull app
           docker-compose up -d app
