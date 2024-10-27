@@ -151,7 +151,7 @@ const ImagePage: React.FC<ImagePageProps> = ({ params }) => {
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="border p-2 rounded w-full"
+            className="border p-2 rounded w-full text-black"
           />
           <button
             onClick={handleTagsUpdate}
@@ -192,7 +192,7 @@ const ImagePage: React.FC<ImagePageProps> = ({ params }) => {
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded text-black"
               placeholder="Write your comment here"
               rows={4}
               required

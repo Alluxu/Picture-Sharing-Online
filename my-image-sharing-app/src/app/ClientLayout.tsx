@@ -105,31 +105,31 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-4">
+            <h2 className="text-2xl font-bold mb-4 text-black">
               {isLogin ? 'Login' : 'Register'}
             </h2>
             <form onSubmit={handleFormSubmit}>
               <div>
-                <label>Email</label>
+                <label className="text-black">Email</label>
                 <input
                   type="email"
-                  className="w-full px-3 py-2 border rounded"
+                  className="w-full px-3 py-2 border rounded text-black"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)} // Set email input
                   required
                 />
               </div>
               <div>
-                <label>Password</label>
+                <label className="text-black">Password</label>
                 <input
                   type="password"
-                  className="w-full px-3 py-2 border rounded"
+                  className="w-full px-3 py-2 border rounded text-black"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)} // Set password input
                   required
                 />
               </div>
-              {error && <p className="text-red-500">{error}</p>} {/* Display errors */}
+              {error && <p className="text-red-500 text-black">{error}</p>} {/* Display errors */}
               <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">
                 {isLogin ? 'Login' : 'Register'}
               </button>

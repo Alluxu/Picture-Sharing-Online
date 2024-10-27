@@ -1,6 +1,6 @@
 // src/app/add-image/page.tsx
 
-"use client"; // Add this at the top to make this a Client Component
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -94,7 +94,7 @@ const AddImagePage: React.FC = () => {
             type="file"
             name="filename"
             onChange={handleFileChange}
-            className="w-full px-3 py-2 border rounded"
+            className="w-full px-3 py-2 border rounded text-black"
             accept="image/*"
             required
           />
@@ -106,7 +106,7 @@ const AddImagePage: React.FC = () => {
             name="title"
             value={formData.title}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border rounded"
+            className="w-full px-3 py-2 border rounded text-black"
             required
           />
         </div>
@@ -116,7 +116,7 @@ const AddImagePage: React.FC = () => {
             name="description"
             value={formData.description}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border rounded"
+            className="w-full px-3 py-2 border rounded text-black"
             rows={3}
             required
           />
@@ -128,7 +128,7 @@ const AddImagePage: React.FC = () => {
             name="tags"
             value={formData.tags}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border rounded"
+            className="w-full px-3 py-2 border rounded text-black"
           />
         </div>
         <div>
@@ -137,7 +137,7 @@ const AddImagePage: React.FC = () => {
             type="email"
             name="user"
             value={userEmail || ''}
-            className="w-full px-3 py-2 border rounded"
+            className="w-full px-3 py-2 border rounded text-black"
             readOnly
           />
         </div>
@@ -147,7 +147,9 @@ const AddImagePage: React.FC = () => {
             type="checkbox"
             name="isPublic"
             checked={formData.isPublic}
-            onChange={handleInputChange}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, isPublic: e.target.checked }))
+            }
           />{' '}
           Make this image public
         </div>
